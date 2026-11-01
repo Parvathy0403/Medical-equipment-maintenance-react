@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI MedCare - Advanced Predictive Maintenance System for Medical Equipment">
+
+    <title>AI MedCare - Predictive Medical Equipment Maintenance</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- React 18, ReactDOM 18 & Babel for JSX Execution (Lab 5 & 6) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        medical: '#0f766e',
+                        lightmedical: '#f0fdfa',
+                        darkmedical: '#134e4a',
+                        accent: '#14b8a6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-teal-500 selection:text-white">
+
+    <!-- Toast Notifications Floating Container -->
+    <div id="toastContainer" class="fixed top-24 right-6 z-50 flex flex-col gap-3 pointer-events-auto"></div>
+
+    <!-- ========================================================= -->
+    <!-- HEADER & NAVIGATION -->
+    <!-- ========================================================= -->
+    <header class="fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+        <nav class="bg-white/85 backdrop-blur-xl border-b border-slate-200/80 shadow-sm">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+
+                    <!-- Logo -->
+                    <a href="#home" class="flex items-center gap-3.5 group">
+                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-800 to-teal-600 flex items-center justify-center text-white text-xl shadow-lg shadow-teal-700/20 group-hover:scale-105 transition">
+                            🩺
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">
+                                AI Med<span class="text-teal-600">Care</span>
+                            </h1>
+                            <p class="text-xs text-slate-500 font-medium">Predictive Maintenance Studio</p>
+                        </div>
+                    </a>
+
+                    <!-- Nav Links -->
+                    <div class="hidden lg:flex items-center gap-7 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                        <a href="#home" class="hover:text-teal-700 transition">Home</a>
+                        <a href="#equipment" class="hover:text-teal-700 transition">Equipment Fleet</a>
+                        <a href="#prediction" class="hover:text-teal-700 transition">AI Engine</a>
+                        <a href="#environment" class="hover:text-teal-700 transition">Environment API</a>
+                        <a href="#inspection" class="hover:text-teal-700 transition">Camera AR</a>
+                        <a href="#videos" class="hover:text-teal-700 transition">Video Hub</a>
+                        <a href="#about" class="hover:text-teal-700 transition">About</a>
+                    </div>
+
+                    <!-- Quick Status Badge -->
+                    <div class="flex items-center gap-3">
+                        <div class="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 border border-teal-200/80 text-xs font-semibold text-teal-800">
+                            <span class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                            <span>AI Core Online</span>
+                        </div>
+                        <a href="AI-MedCare-React-Lab5-6.zip" download="AI-MedCare-React-Lab5-6.zip" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-emerald-700/20">
+                            <span>📥</span>
+                            <span>Download ZIP</span>
+                        </a>
+                        <button onclick="openWorkOrderModal()"  class="bg-teal-700 hover:bg-teal-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-md shadow-teal-700/20">
+                            + Work Order
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+
+        <!-- ===================================================== -->
+        <!-- HERO SECTION -->
+        <!-- ===================================================== -->
+        <section id="home" class="relative min-h-screen flex items-center overflow-hidden pt-20">
+
+            <div class="absolute inset-0 bg-cover bg-center"
+                style="background-image: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=2000&q=85');">
+            </div>
+
+            <div class="absolute inset-0 hero-overlay"></div>
+
+            <div class="absolute top-28 right-10 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-10 left-10 w-96 h-96 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative max-w-7xl mx-auto px-6 lg:px-8 py-20 w-full">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+                    <!-- Hero Left Text -->
+                    <div class="text-white">
+
+                        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full glass mb-6 text-xs font-semibold uppercase tracking-wider text-teal-200">
+                            <span class="w-2 h-2 bg-teal-400 rounded-full animate-ping"></span>
+                            Next-Gen Medical Telemetry & Maintenance AI
+                        </div>
+
+                        <h2 class="text-5xl lg:text-7xl font-black leading-tight tracking-tight mb-6">
+                            Predict.
+                            <span class="gradient-text">Prevent.</span>
+                            Protect.
+                        </h2>
+
+                        <p class="text-lg text-teal-100/90 leading-relaxed max-w-xl mb-8">
+                            AI MedCare leverages real-time sensor telemetry, machine learning predictive models, and browser-native APIs to monitor medical devices and prevent catastrophic equipment downtime before it happens.
+                        </p>
+
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#prediction"
+                                class="bg-white text-teal-900 px-7 py-3.5 rounded-full font-bold hover:bg-teal-50 transition shadow-2xl flex items-center gap-2">
+                                <span>Launch AI Predictor</span>
+                                <span>→</span>
+                            </a>
+                            <a href="#equipment"
+                                class="glass text-white px-7 py-3.5 rounded-full font-bold hover:bg-white/20 transition flex items-center gap-2">
+                                <span>View Monitored Fleet</span>
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Hero Right Interactive Widget -->
+                    <div class="hidden lg:block">
+                        <div class="glass-dark rounded-3xl p-7 text-white shadow-2xl animate-float border border-white/10">
+
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <p class="text-xs text-teal-300 font-mono">LIVE TELEMETRY FEED</p>
+                                    <h3 class="text-2xl font-bold tracking-tight">Active ICU Monitor</h3>
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-400/30 flex items-center justify-center">
+                                    <span class="text-2xl animate-pulse">🤖</span>
+                                </div>
+                            </div>
+
+                            <!-- Animated ECG SVG -->
+                            <div class="h-20 bg-slate-950/60 rounded-2xl p-3 mb-6 relative overflow-hidden border border-teal-500/20 flex items-center">
+                                <svg class="w-full h-full text-teal-400" viewBox="0 0 500 100" preserveAspectRatio="none">
+                                    <path class="ecg-path" fill="none" stroke="currentColor" stroke-width="3"
+                                        d="M 0 50 L 100 50 L 120 20 L 140 80 L 160 50 L 220 50 L 230 10 L 250 90 L 270 50 L 350 50 L 370 30 L 390 70 L 410 50 L 500 50" />
+                                </svg>
+                                <span class="absolute top-2 right-3 text-xs font-mono text-teal-400 bg-teal-950/80 px-2 py-0.5 rounded border border-teal-500/40">72 BPM | SpO2 99%</span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="bg-white/5 rounded-2xl p-3.5 flex justify-between items-center border border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl">🫀</span>
+                                        <div>
+                                            <p class="font-bold text-sm">Patient Monitor EQ-104</p>
+                                            <p class="text-xs text-teal-200">ICU - Unit 04</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-3 py-1 bg-green-500/20 text-green-300 border border-green-500/30 rounded-full text-xs font-bold">
+                                        96% Optimal
+                                    </span>
+                                </div>
+
+                                <div class="bg-white/5 rounded-2xl p-3.5 flex justify-between items-center border border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl">🫁</span>
+                                        <div>
+                                            <p class="font-bold text-sm">Servo Ventilator EQ-208</p>
+                                            <p class="text-xs text-teal-200">ICU - Unit 12</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-3 py-1 bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 rounded-full text-xs font-bold">
+                                        Monitor Risk
+                                    </span>
+                                </div>
+
+                                <div class="bg-white/5 rounded-2xl p-3.5 flex justify-between items-center border border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl">🩻</span>
+                                        <div>
+                                            <p class="font-bold text-sm">X-Ray CT System EQ-302</p>
+                                            <p class="text-xs text-teal-200">Radiology - Bay 02</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-3 py-1 bg-red-500/20 text-red-300 border border-red-500/30 rounded-full text-xs font-bold">
+                                        Service Due
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 p-4 rounded-2xl bg-teal-950/50 border border-teal-400/20">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">💡</span>
+                                    <div>
+                                        <p class="text-xs font-bold text-teal-300 uppercase tracking-wider">AI Predictive Insight</p>
+                                        <p class="text-xs text-teal-100 mt-0.5">
+                                            X-Ray tube thermal loading requires recalibration in 7 days.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- STATISTICS & FLEET OVERVIEW -->
+        <!-- ===================================================== -->
+        <section class="relative -mt-10 z-20">
+            <div class="max-w-6xl mx-auto px-6">
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 grid grid-cols-2 md:grid-cols-4 overflow-hidden">
+
+                    <div class="p-6 text-center border-b md:border-b-0 md:border-r border-slate-100">
+                        <p class="text-3xl font-black text-teal-700 font-mono">248+</p>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-1">Monitored Devices</p>
+                    </div>
+
+                    <div class="p-6 text-center border-b md:border-b-0 md:border-r border-slate-100">
+                        <p class="text-3xl font-black text-teal-700 font-mono">94.2%</p>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-1">Prediction Accuracy</p>
+                    </div>
+
+                    <div class="p-6 text-center border-r border-slate-100">
+                        <p class="text-3xl font-black text-teal-700 font-mono">37%</p>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-1">Downtime Saved</p>
+                    </div>
+
+                    <div class="p-6 text-center">
+                        <p class="text-3xl font-black text-teal-700 font-mono">24/7</p>
+                        <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mt-1">Sensor Telemetry</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- EQUIPMENT MANAGEMENT SECTION -->
+        <!-- ===================================================== -->
+        <section id="equipment" class="py-24">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold uppercase tracking-wider mb-3 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span>
+                        <span>Lab Exercise 5 & 6 · Domain-Based React Application</span>
+                    </div>
+                    <h2 class="text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                        Critical Medical Fleet Management
+                    </h2>
+                    <p class="text-slate-500 mt-3 leading-relaxed text-sm">
+                        Component-based React application with state management hooks, controlled form handling (multiple inputs, radio buttons, select dropdowns), dynamic search filtering, and full CRUD operations.
+                    </p>
+                </div>
+
+                <!-- React 18 Application Mount Point -->
+                <div id="react-equipment-root">
+                    <div class="text-center py-12 text-slate-400 font-mono text-sm">
+                        Loading React Fleet Manager...
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- AI PREDICTION ENGINE STUDIO -->
+        <!-- ===================================================== -->
+        <section id="prediction" class="py-24 bg-slate-900 relative overflow-hidden text-white">
+
+            <div class="absolute w-96 h-96 bg-teal-600/20 rounded-full blur-3xl -top-20 -right-20 pointer-events-none"></div>
+            <div class="absolute w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl bottom-0 left-0 pointer-events-none"></div>
+
+            <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <span class="text-teal-400 font-bold text-xs uppercase tracking-widest bg-teal-950 px-3 py-1 rounded-full border border-teal-500/30">
+                        Interactive Machine Learning Studio
+                    </span>
+                    <h2 class="text-4xl lg:text-5xl font-black mt-4 tracking-tight">
+                        AI Maintenance <span class="text-teal-400">Predictor</span>
+                    </h2>
+                    <p class="text-slate-400 mt-4 leading-relaxed">
+                        Adjust equipment operating parameters below to compute real-time failure probability scores and trigger speech/desktop alerts.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-10 items-start">
+
+                    <!-- Left: Control Sliders Panel -->
+                    <div class="lg:col-span-7 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl space-y-6">
+
+                        <h3 class="text-xl font-bold flex items-center gap-2">
+                            <span>⚙️</span> Equipment Telemetry Simulator
+                        </h3>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Device Classification</label>
+                            <select id="paramEqType" onchange="calculatePrediction()" class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="X-Ray Radiography CT Scanner">X-Ray Radiography CT Scanner</option>
+                                <option value="ICU Mechanical Ventilator">ICU Mechanical Ventilator</option>
+                                <option value="Multiparameter Vital Monitor">Multiparameter Vital Monitor</option>
+                                <option value="Smart Infusion Pump">Smart Infusion Pump</option>
+                                <option value="12-Lead ECG Machine">12-Lead ECG Machine</option>
+                            </select>
+                        </div>
+
+                        <!-- Operating Hours -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Total Operating Hours</span>
+                                <span id="valHours" class="text-teal-400 font-mono">1400 hrs</span>
+                            </div>
+                            <input id="paramHours" type="range" min="100" max="8000" step="50" value="1400"
+                                class="w-full accent-teal-500 cursor-pointer">
+                        </div>
+
+                        <!-- Temperature -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Housing Temperature (°C)</span>
+                                <span id="valTemp" class="text-teal-400 font-mono">24 °C</span>
+                            </div>
+                            <input id="paramTemp" type="range" min="15" max="45" step="0.5" value="24"
+                                class="w-full accent-teal-500 cursor-pointer">
+                        </div>
+
+                        <!-- Vibration -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Mechanical Vibration (mm/s)</span>
+                                <span id="valVibe" class="text-teal-400 font-mono">0.2 mm/s</span>
+                            </div>
+                            <input id="paramVibe" type="range" min="0" max="3" step="0.05" value="0.2"
+                                class="w-full accent-teal-500 cursor-pointer">
+                        </div>
+
+                        <!-- Error Code Count -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Log Error Events (30 Days)</span>
+                                <span id="valErrors" class="text-teal-400 font-mono">0 faults</span>
+                            </div>
+                            <input id="paramErrors" type="range" min="0" max="10" step="1" value="0"
+                                class="w-full accent-teal-500 cursor-pointer">
+                        </div>
+
+                        <!-- Days Since Calibration -->
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-300">Days Since Last Calibration</span>
+                                <span id="valDays" class="text-teal-400 font-mono">30 days</span>
+                            </div>
+                            <input id="paramDays" type="range" min="1" max="365" step="5" value="30"
+                                class="w-full accent-teal-500 cursor-pointer">
+                        </div>
+
+                    </div>
+
+                    <!-- Right: Prediction Rationale & Web Speech Card -->
+                    <div class="lg:col-span-5 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl flex flex-col justify-between">
+
+                        <div>
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <p class="text-slate-400 text-xs font-mono">AI DIAGNOSTIC OUTPUT</p>
+                                    <h3 class="text-xl font-bold">Predicted Risk Score</h3>
+                                </div>
+                                <span id="riskLevelBadge" class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-bold">
+                                    Low Risk
+                                </span>
+                            </div>
+
+                            <!-- Progress Meter -->
+                            <div class="mb-6">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-slate-400 text-xs font-semibold">Probability of Failure</span>
+                                    <span id="predictionRiskValue" class="text-2xl font-black text-teal-400 font-mono">18%</span>
+                                </div>
+                                <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="predictionRiskGauge" class="h-full bg-gradient-to-r from-teal-400 to-green-400 rounded-full transition-all duration-500" style="width: 18%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Rationale Box -->
+                            <div class="bg-teal-950/40 border border-teal-500/20 rounded-2xl p-5 mb-6">
+                                <div class="flex gap-3 items-start">
+                                    <span class="text-2xl">🧠</span>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-teal-300">AI Recommendation Rationale</h4>
+                                        <p id="recommendationText" class="text-slate-300 text-xs mt-2 leading-relaxed">
+                                            Optimal operational parameters. Continue standard maintenance schedule.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Web Speech Options -->
+                            <div class="space-y-3 mb-6">
+                                <label class="block text-xs font-semibold text-slate-400">Select Voice Synthesizer</label>
+                                <select id="voiceSelect" class="w-full bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs outline-none">
+                                    <!-- Populated by JS -->
+                                </select>
+                            </div>
+
+                            <!-- Audio Waveform indicator -->
+                            <div id="audioWaveform" class="hidden flex items-center justify-center gap-1.5 py-2 mb-4 bg-teal-950/50 rounded-xl border border-teal-500/30">
+                                <span class="text-xs text-teal-400 font-mono mr-2">Speaking...</span>
+                                <span class="audio-bar"></span>
+                                <span class="audio-bar"></span>
+                                <span class="audio-bar"></span>
+                                <span class="audio-bar"></span>
+                                <span class="audio-bar"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
+                            <button onclick="showPrediction()"
+                                class="py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition shadow-lg">
+                                🔔 Push Desktop Alert
+                            </button>
+
+                            <button onclick="speakRecommendation()"
+                                class="py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 border border-slate-700">
+                                <span>🔊 Read Aloud</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- OPEN-METEO API - ENVIRONMENT MONITORING -->
+        <!-- ===================================================== -->
+        <section id="environment" class="py-24 bg-teal-50/60">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-14">
+                    <span class="text-teal-700 font-bold text-xs uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-slate-200">
+                        Open-Meteo API Integration
+                    </span>
+                    <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mt-4 tracking-tight">
+                        Operating Environment Diagnostics
+                    </h2>
+                    <p class="text-slate-600 mt-4">
+                        Hospital ambient temperature and humidity heavily impact optics and high-voltage X-ray tubes. Live telemetry fetched below via Open-Meteo REST API.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 p-8 lg:p-10">
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900" id="locationNameDisplay">Bengaluru, India</h3>
+                            <p class="text-xs text-slate-500 font-mono mt-1" id="weatherStatus">Click Refresh to load live meteorological data.</p>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <select id="weatherCitySelect" onchange="loadWeather()" class="bg-slate-100 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-700 outline-none">
+                                <option value="bengaluru">Bengaluru, India</option>
+                                <option value="newyork">New York, USA</option>
+                                <option value="london">London, UK</option>
+                                <option value="tokyo">Tokyo, Japan</option>
+                                <option value="frankfurt">Frankfurt, Germany</option>
+                            </select>
+
+                            <button onclick="loadWeather()"
+                                class="bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-teal-800 transition shadow-md">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+
+                        <div class="rounded-2xl bg-teal-50 p-6 border border-teal-100">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Ambient Temperature</p>
+                            <div class="flex items-baseline gap-2 mt-2">
+                                <span id="temperatureValue" class="text-5xl font-black text-teal-800 font-mono">--</span>
+                                <span class="text-lg font-bold text-slate-500">°C</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Recommended: 18°C – 26°C</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-teal-50 p-6 border border-teal-100">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Relative Humidity</p>
+                            <div class="flex items-baseline gap-2 mt-2">
+                                <span id="humidityValue" class="text-5xl font-black text-teal-800 font-mono">--</span>
+                                <span class="text-lg font-bold text-slate-500">%</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Recommended: 30% – 60%</p>
+                        </div>
+
+                        <div class="rounded-2xl bg-teal-50 p-6 border border-teal-100 flex flex-col justify-between">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Safety Status</p>
+                            <p id="environmentStatus" class="text-2xl font-black text-slate-700 mt-2">
+                                Awaiting Telemetry
+                            </p>
+                            <p class="text-xs text-slate-500">Assessed by AI MedCare Thresholds</p>
+                        </div>
+
+                    </div>
+
+                    <!-- Forecast Trend Chart -->
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800 mb-3">12-Hour Temperature Trend Forecast</h4>
+                        <div class="h-44 w-full bg-slate-50 rounded-2xl p-4 border border-slate-200/60">
+                            <canvas id="weatherTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- MEDIADEVICES API - CAMERA AR INSPECTION -->
+        <!-- ===================================================== -->
+        <section id="inspection" class="py-24">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-14">
+                    <span class="text-teal-700 font-bold text-xs uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
+                        MediaDevices API Integration
+                    </span>
+                    <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mt-4 tracking-tight">
+                        Camera Optical AR Inspection
+                    </h2>
+                    <p class="text-slate-600 mt-4">
+                        Access your webcam feed for real-time visual fault scanning, optical character recognition, and defect detection.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl p-8 lg:p-10 shadow-2xl text-white border border-slate-800">
+
+                    <div class="grid lg:grid-cols-12 gap-8 items-center">
+
+                        <!-- Left Camera Controls -->
+                        <div class="lg:col-span-5 space-y-5">
+                            <h3 class="text-2xl font-bold">Optical Inspection Terminal</h3>
+                            <p class="text-slate-400 text-xs leading-relaxed">
+                                Connect camera feed to initiate computer vision scan. Takes instantaneous optical snapshots to analyze device housing cracks, port oxidation, and display faults.
+                            </p>
+
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="startCamera()"
+                                    class="bg-teal-600 hover:bg-teal-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition shadow-lg flex items-center gap-2">
+                                    <span>📹 Start Feed</span>
+                                </button>
+
+                                <button onclick="stopCamera()"
+                                    class="bg-slate-800 hover:bg-slate-700 text-white px-5 py-3 rounded-xl text-xs font-bold transition border border-slate-700">
+                                    Stop Feed
+                                </button>
+
+                                <button onclick="captureInspectionSnapshot()"
+                                    class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-3 rounded-xl text-xs font-bold transition shadow-lg">
+                                    📸 Capture & AI Scan
+                                </button>
+                            </div>
+
+                            <p id="cameraStatus" class="text-xs font-mono text-teal-400">
+                                Camera currently offline. Press Start Feed to initiate.
+                            </p>
+
+                            <!-- Inspection Output Report Box -->
+                            <div id="inspectionReportBox" class="mt-4"></div>
+                        </div>
+
+                        <!-- Right Camera Viewport with AR Scan Overlay -->
+                        <div class="lg:col-span-7">
+                            <div class="relative bg-black rounded-2xl overflow-hidden h-80 flex items-center justify-center border border-teal-500/30 shadow-inner">
+
+                                <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover camera-mirror hidden"></video>
+
+                                <p id="cameraPlaceholder" class="text-slate-500 text-xs font-mono text-center px-6">
+                                    [ Camera preview viewport offline ]<br>
+                                    Click "Start Feed" to launch MediaDevices camera stream.
+                                </p>
+
+                                <!-- AR Overlay Frame -->
+                                <div id="arScanOverlay" class="hidden absolute inset-0 pointer-events-none p-4 flex flex-col justify-between">
+                                    <div class="scanner-line"></div>
+                                    <div class="flex justify-between text-xs font-mono text-teal-400 bg-black/40 px-2 py-1 rounded">
+                                        <span>TARGET: MEDICAL_DEVICE</span>
+                                        <span>FPS: 30</span>
+                                    </div>
+                                    <div class="self-center w-32 h-32 border-2 border-dashed border-teal-400/80 rounded-xl flex items-center justify-center">
+                                        <span class="text-teal-400 text-xs font-mono">+ SCAN FOCUS</span>
+                                    </div>
+                                    <div class="text-xs font-mono text-teal-400 text-right bg-black/40 px-2 py-1 rounded">
+                                        STATUS: LOCK ENGAGED
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Snapshot Preview -->
+                            <div class="mt-4 flex items-center gap-4">
+                                <img id="inspectionSnapshot" class="w-20 h-16 object-cover rounded-lg border border-teal-500/40 hidden shadow-md" alt="Snapshot preview">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- YOUTUBE DATA API - MAINTENANCE VIDEOS -->
+        <!-- ===================================================== -->
+        <section id="videos" class="py-24 bg-slate-100/70">
+            <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+                <div class="text-center max-w-3xl mx-auto mb-14">
+                    <span class="text-teal-700 font-bold text-xs uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-slate-200">
+                        YouTube Data API Integration
+                    </span>
+
+                    <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mt-4 tracking-tight">
+                        Biomedical Training Video Hub
+                    </h2>
+
+                    <p class="text-slate-600 mt-4">
+                        Search YouTube for biomedical equipment maintenance tutorials, sensor calibration protocols, and preventive maintenance guides.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-xl border border-slate-200/80 p-8 lg:p-10">
+
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input id="youtubeSearch"
+                            type="text"
+                            value="medical equipment maintenance"
+                            class="flex-1 border border-slate-300 rounded-xl px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-teal-500"
+                            placeholder="Search video topics (e.g. ventilator testing, ECG repair)...">
+
+                        <button onclick="searchYouTube()"
+                            class="bg-teal-700 text-white px-7 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-800 transition shadow-md">
+                            Search YouTube
+                        </button>
+                    </div>
+
+                    <p id="youtubeStatus" class="text-xs text-slate-500 mt-3 font-mono">
+                        Loaded curated offline catalog. Configure YOUR_YOUTUBE_API_KEY in app.js for live query fetching.
+                    </p>
+
+                    <div id="youtubeResults" class="grid md:grid-cols-3 gap-6 mt-8">
+                        <!-- Dynamic rendering via app.js -->
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================== -->
+        <!-- ABOUT & STANDARDS -->
+        <!-- ===================================================== -->
+        <section id="about" class="py-24">
+            <div class="max-w-5xl mx-auto px-6">
+
+                <article class="bg-white rounded-3xl p-10 border border-slate-200/80 shadow-lg space-y-6">
+                    <span class="text-teal-700 font-bold text-xs uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
+                        Platform Architecture
+                    </span>
+
+                    <h2 class="text-4xl font-black text-slate-900 tracking-tight">
+                        Predictive Maintenance for Healthcare 4.0
+                    </h2>
+
+                    <p class="text-slate-600 leading-relaxed text-base">
+                        AI MedCare is designed to eliminate unscheduled medical device downtime in critical care environments. By blending telemetry sensor streaming, Open-Meteo ambient climate evaluation, computer vision optical inspection, and Web Speech voice notifications into one seamless portal, clinical teams can ensure equipment availability 24/7.
+                    </p>
+
+                    <div class="grid md:grid-cols-3 gap-6 pt-4">
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200/60">
+                            <div class="text-2xl mb-2">⚡</div>
+                            <h4 class="font-bold text-slate-900 text-sm">ISO 13485 Compliant</h4>
+                            <p class="text-xs text-slate-500 mt-1">Quality management standards for medical devices and diagnostics.</p>
+                        </div>
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200/60">
+                            <div class="text-2xl mb-2">🛡️</div>
+                            <h4 class="font-bold text-slate-900 text-sm">Zero-Trust Telemetry</h4>
+                            <p class="text-xs text-slate-500 mt-1">Encrypted real-time data ingestion for vital signs & imaging tubes.</p>
+                        </div>
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200/60">
+                            <div class="text-2xl mb-2">📈</div>
+                            <h4 class="font-bold text-slate-900 text-sm">37% Cost Reduction</h4>
+                            <p class="text-xs text-slate-500 mt-1">Extends hardware lifespan through early bearing & sensor wear detection.</p>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================================= -->
+    <footer class="bg-slate-950 text-slate-400 border-t border-slate-800">
+
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-14">
+
+            <div class="grid md:grid-cols-3 gap-10">
+
+                <div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-teal-700 flex items-center justify-center text-white text-xl">
+                            🩺
+                        </div>
+                        <h2 class="text-white font-extrabold text-xl">AI MedCare</h2>
+                    </div>
+
+                    <p class="text-xs mt-4 leading-relaxed max-w-sm text-slate-400">
+                        Next-generation AI predictive maintenance platform empowering healthcare facilities with zero-downtime equipment reliability.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Navigation</h3>
+                    <ul class="space-y-2 text-xs font-semibold">
+                        <li><a href="#home" class="hover:text-teal-400 transition">Home</a></li>
+                        <li><a href="#equipment" class="hover:text-teal-400 transition">Equipment Fleet</a></li>
+                        <li><a href="#prediction" class="hover:text-teal-400 transition">AI Predictor</a></li>
+                        <li><a href="#environment" class="hover:text-teal-400 transition">Open-Meteo Diagnostics</a></li>
+                        <li><a href="#inspection" class="hover:text-teal-400 transition">Camera Inspection</a></li>
+                        <li><a href="#videos" class="hover:text-teal-400 transition">Video Hub</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-4">API Integrations Included</h3>
+                    <ul class="space-y-1.5 text-xs text-slate-400 font-mono">
+                        <li class="text-teal-400">✓ Open-Meteo REST API</li>
+                        <li class="text-teal-400">✓ Web Speech Synthesis API</li>
+                        <li class="text-teal-400">✓ HTML5 MediaDevices API</li>
+                        <li class="text-teal-400">✓ YouTube Data API v3</li>
+                        <li class="text-teal-400">✓ Browser Notification API</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="border-t border-slate-800/80 mt-12 pt-6 text-xs flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500">
+                <p>© 2026 AI MedCare System. Full Stack Development Project.</p>
+                <p>Designed with Tailwind CSS, Chart.js & Vanilla JavaScript</p>
+            </div>
+
+        </div>
+    </footer>
+
+
+    <!-- ========================================================= -->
+    <!-- MODALS -->
+    <!-- ========================================================= -->
+
+    <!-- Equipment Detailed Telemetry Modal -->
+    <div id="equipmentModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+                <div>
+                    <span id="modalEqId" class="text-xs font-mono bg-teal-50 text-teal-700 px-2.5 py-1 rounded-md font-bold">EQ-000</span>
+                    <h3 id="modalEqName" class="text-2xl font-black text-slate-900 mt-2">Equipment Details</h3>
+                    <p id="modalEqSpec" class="text-xs text-slate-500 mt-1 font-mono">Spec details</p>
+                </div>
+                <button onclick="closeEquipmentModal()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold">&times;</button>
+            </div>
+
+            <p id="modalEqDesc" class="text-slate-600 text-xs leading-relaxed mb-6"></p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                <div class="bg-slate-50 p-3.5 rounded-2xl text-center">
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Health Index</p>
+                    <p id="modalEqHealth" class="text-xl font-bold text-teal-700 font-mono mt-1">90%</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-2xl text-center">
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Total Hours</p>
+                    <p id="modalEqHours" class="text-xl font-bold text-slate-800 font-mono mt-1">1200 hrs</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-2xl text-center">
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Temperature</p>
+                    <p id="modalEqTemp" class="text-xl font-bold text-slate-800 font-mono mt-1">24 °C</p>
+                </div>
+                <div class="bg-slate-50 p-3.5 rounded-2xl text-center">
+                    <p class="text-[10px] uppercase font-bold text-slate-400">Vibration</p>
+                    <p id="modalEqVibe" class="text-xl font-bold text-slate-800 font-mono mt-1">0.1 mm/s</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Thermal Telemetry Trend (Past 24h)</h4>
+                <div class="h-44 bg-slate-50 rounded-2xl p-3 border border-slate-100">
+                    <canvas id="telemetryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                <span class="text-xs text-slate-400">Last Serviced: <strong id="modalEqService" class="text-slate-700">2026-08-01</strong></span>
+                <button onclick="closeEquipmentModal(); openWorkOrderModal();" class="bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-teal-800 transition">
+                    Schedule Maintenance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- YouTube Embedded Video Modal -->
+    <div id="videoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-4xl w-full p-6 text-white border border-slate-800 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="videoModalTitle" class="font-bold text-base line-clamp-1">Maintenance Guide Video</h3>
+                <button onclick="closeVideoModal()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-black border border-slate-800">
+                <iframe id="youtubeIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Work Order Modal -->
+    <div id="workOrderModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
+                <h3 class="text-xl font-bold text-slate-900">Schedule Work Order</h3>
+                <button onclick="closeWorkOrderModal()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold">&times;</button>
+            </div>
+
+            <form onsubmit="submitWorkOrder(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Select Equipment</label>
+                    <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 outline-none">
+                        <option>EQ-104 - Intensive Vital Monitor (ICU)</option>
+                        <option>EQ-208 - Servo Ventilator (ICU)</option>
+                        <option>EQ-302 - Digital X-Ray System (Radiology)</option>
+                        <option>EQ-411 - Volumetric Infusion Pump (Surgical)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Assigned Biomedical Technician</label>
+                    <input type="text" value="Dr. A. Sharma (Biomedical Lead)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Priority Level</label>
+                    <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none">
+                        <option value="high">High - Recalibration Required</option>
+                        <option value="critical">CRITICAL - Preventative Replacement</option>
+                        <option value="normal">Normal - Routine 90-day inspection</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Service Notes</label>
+                    <textarea rows="3" placeholder="Describe symptoms or maintenance requirements..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none"></textarea>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeWorkOrderModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-teal-700 text-white text-xs font-bold hover:bg-teal-800 transition shadow-md">Dispatch Work Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <!-- React Equipment Fleet Module (Lab Exercise 5 & 6) -->
+    <!-- React Equipment Fleet Module (Lab Exercise 5 & 6 Inline for instant execution) -->
+    <script type="text/babel">
+/* =========================================================================
+   AI MedCare - React Equipment Fleet & Maintenance Management Module
+   Lab Exercise 5 & 6: Domain-Based React Application
+   Features:
+   - React 18 Functional Components & JSX
+   - React useState(), useEffect(), useMemo() Hooks
+   - Form Handling & Validation
+   - Multiple Input Fields
+   - Radio Buttons (Operational Status)
+   - Select Dropdown (Department Category)
+   - Reusable Components (Card, Modal, Stats, Toolbar, Toasts)
+   - CRUD Operations (Create, Read, Update, Delete)
+   - Dynamic Live Search Filtering & Sorting
+   - Local Storage Persistence & JSON-Server (REST API) Compatibility
+   ========================================================================= */
+
+const { useState, useEffect, useMemo, useRef } = React;
+
+// Default initial equipment seed data
+const DEFAULT_FLEET = [
+    {
+        id: "EQ-104",
+        name: "Intensive Patient Vital Monitor",
+        dept: "ICU - Ward 4",
+        category: "icu",
+        type: "Patient Monitor",
+        status: "Operational",
+        health: 96,
+        temp: 22.4,
+        vibration: 0.12,
+        hours: 1420,
+        errors: 0,
+        lastService: "2026-08-15",
+        image: "images/patients_monitor.png",
+        spec: "Multi-parameter 15-inch ECG/SpO2/NIBP Monitor",
+        desc: "Monitors real-time heart rate, blood pressure, and oxygen saturation for critical ICU patients."
+    },
+    {
+        id: "EQ-208",
+        name: "Servo-Air ICU Mechanical Ventilator",
+        dept: "ICU - Unit 12",
+        category: "icu",
+        type: "Ventilator",
+        status: "Monitor",
+        health: 74,
+        temp: 28.1,
+        vibration: 0.85,
+        hours: 3840,
+        errors: 2,
+        lastService: "2026-06-10",
+        image: "images/ventilator.png",
+        spec: "Turbine-driven lung ventilator with flow sensors",
+        desc: "Provides continuous mechanical ventilation support. Sensor drift detected during recent 24h cycle."
+    },
+    {
+        id: "EQ-302",
+        name: "Digital Radiography X-Ray & CT System",
+        dept: "Radiology - Bay 2",
+        category: "radiology",
+        type: "X-Ray / CT System",
+        status: "Attention",
+        health: 45,
+        temp: 34.2,
+        vibration: 1.45,
+        hours: 5600,
+        errors: 5,
+        lastService: "2026-04-02",
+        image: "images/imaging_system.png",
+        spec: "High-frequency 80kW X-ray generator & detector tube",
+        desc: "Tube anode thermal load exceeding baseline. Maintenance inspection advised within 7 days."
+    },
+    {
+        id: "EQ-411",
+        name: "Volumetric Infusion Smart Pump",
+        dept: "Surgical - OR 3",
+        category: "surgery",
+        type: "Infusion Pump",
+        status: "Operational",
+        health: 98,
+        temp: 21.0,
+        vibration: 0.05,
+        hours: 890,
+        errors: 0,
+        lastService: "2026-09-01",
+        image: "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80",
+        spec: "Micro-stepper infusion pump with bubble detector",
+        desc: "Delivers precision intravenous medication with anti-free flow safety locks."
+    },
+    {
+        id: "EQ-505",
+        name: "12-Lead Digital ECG Machine",
+        dept: "Cardiology - Rm 101",
+        category: "cardiology",
+        type: "ECG Machine",
+        status: "Operational",
+        health: 91,
+        temp: 23.5,
+        vibration: 0.18,
+        hours: 2150,
+        errors: 1,
+        lastService: "2026-07-20",
+        image: "images/patients_monitor.png",
+        spec: "High-resolution 12-channel electrocardiograph",
+        desc: "Records cardiac electrical activity. Thermal printer calibration verified."
+    },
+    {
+        id: "EQ-612",
+        name: "Anesthesia Delivery Workstation",
+        dept: "Surgical - OR 1",
+        category: "surgery",
+        type: "Anesthesia System",
+        status: "Monitor",
+        health: 81,
+        temp: 26.3,
+        vibration: 0.42,
+        hours: 4120,
+        errors: 1,
+        lastService: "2026-05-18",
+        image: "images/ventilator.png",
+        spec: "Closed-circuit anesthesia machine with vaporizer",
+        desc: "Gas mixing and vaporizer pressure monitored in normal operating range."
+    }
+];
+
+const LOCAL_STORAGE_KEY = "ai_medcare_equipment_fleet";
+const JSON_SERVER_URL = "http://localhost:5000/equipment";
+
+// Helper for image fallbacks
+const getValidImageUrl = (img) => {
+    if (!img) return "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80";
+    return img;
+};
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 1: Toast Notification
+// =========================================================================
+function ToastNotification({ toast, onClose }) {
+    if (!toast) return null;
+    const isSuccess = toast.type === "success";
+    const isDanger = toast.type === "danger";
+
+    return (
+        <div className="fixed top-24 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl border transition-all duration-300 animate-bounce bg-white/95 border-teal-500/30 text-slate-900">
+            <span className="text-xl">
+                {isSuccess ? "✅" : isDanger ? "🗑️" : "ℹ️"}
+            </span>
+            <div>
+                <p className="text-xs font-bold text-teal-800 uppercase tracking-wider">{toast.title || "Fleet Notification"}</p>
+                <p className="text-xs text-slate-600 font-medium">{toast.message}</p>
+            </div>
+            <button onClick={onClose} className="ml-3 text-slate-400 hover:text-slate-700 text-sm font-bold">✕</button>
+        </div>
+    );
+}
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 2: Fleet Statistics Bar
+// =========================================================================
+function FleetStatsBar({ stats }) {
+    return (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 text-center">
+                <p className="text-[11px] font-bold uppercase text-slate-500 tracking-wider">Total Fleet</p>
+                <p className="text-2xl font-black text-slate-900 font-mono mt-1">{stats.total}</p>
+                <span className="text-[10px] text-teal-600 font-semibold">Active Records</span>
+            </div>
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-green-200/80 text-center">
+                <p className="text-[11px] font-bold uppercase text-green-700 tracking-wider">Operational</p>
+                <p className="text-2xl font-black text-green-600 font-mono mt-1">{stats.operational}</p>
+                <span className="text-[10px] text-green-600 font-semibold">Optimal Health</span>
+            </div>
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-yellow-200/80 text-center">
+                <p className="text-[11px] font-bold uppercase text-yellow-700 tracking-wider">Inspection</p>
+                <p className="text-2xl font-black text-yellow-600 font-mono mt-1">{stats.monitor}</p>
+                <span className="text-[10px] text-yellow-600 font-semibold">Monitor Closely</span>
+            </div>
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-red-200/80 text-center">
+                <p className="text-[11px] font-bold uppercase text-red-700 tracking-wider">Maintenance</p>
+                <p className="text-2xl font-black text-red-600 font-mono mt-1">{stats.attention}</p>
+                <span className="text-[10px] text-red-600 font-semibold">Action Required</span>
+            </div>
+            <div className="col-span-2 md:col-span-1 bg-gradient-to-br from-teal-700 to-teal-900 rounded-2xl p-4 shadow-md text-white text-center">
+                <p className="text-[11px] font-bold uppercase text-teal-200 tracking-wider">Fleet Avg Health</p>
+                <p className="text-2xl font-black font-mono mt-1">{stats.avgHealth}%</p>
+                <span className="text-[10px] text-teal-200 font-semibold">Telemetry Score</span>
+            </div>
+        </div>
+    );
+}
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 3: Equipment Filter & Search Toolbar
+// =========================================================================
+function EquipmentFilterToolbar({
+    categories,
+    activeCategory,
+    onSelectCategory,
+    searchTerm,
+    onSearchChange,
+    sortBy,
+    onSortChange,
+    onOpenAddModal,
+    onResetFleet,
+    resultCount,
+    totalCount,
+    isJsonServer
+}) {
+    return (
+        <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-200/80 mb-8 space-y-4">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                
+                {/* Category Filter Tabs */}
+                <div className="flex flex-wrap items-center gap-2">
+                    {categories.map(cat => {
+                        const isActive = activeCategory === cat.key;
+                        return (
+                            <button
+                                key={cat.key}
+                                onClick={() => onSelectCategory(cat.key)}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
+                                    isActive
+                                        ? "bg-teal-700 text-white shadow-md shadow-teal-700/20 scale-105"
+                                        : "bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100"
+                                }`}
+                            >
+                                <span>{cat.icon}</span>
+                                <span>{cat.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Primary Action: Add Equipment CTA */}
+                <div className="flex items-center gap-2.5">
+                    <button
+                        onClick={onOpenAddModal}
+                        className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition-all shadow-md shadow-teal-700/20 flex items-center justify-center gap-2 hover:scale-[1.02]"
+                    >
+                        <span className="text-base font-black">+</span>
+                        <span>Add New Equipment</span>
+                    </button>
+
+                    <button
+                        onClick={onResetFleet}
+                        title="Restore initial default sample fleet"
+                        className="px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 text-xs font-semibold transition"
+                    >
+                        🔄 Reset
+                    </button>
+                </div>
+            </div>
+
+            {/* Sub-toolbar: Search & Sort Controls */}
+            <div className="pt-3 border-t border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                
+                {/* Dynamic Search Box (Bonus Requirement) */}
+                <div className="relative flex-1 max-w-md">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        placeholder="Dynamic Search (e.g. EQ-104, Ventilator, ICU, X-Ray)..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-9 py-2 text-xs outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white text-slate-800 font-medium transition"
+                    />
+                    {searchTerm && (
+                        <button
+                            onClick={() => onSearchChange("")}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold"
+                            title="Clear search"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 justify-between md:justify-end">
+                    {/* Results Counter */}
+                    <span className="text-xs font-mono text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                        Showing <strong className="text-teal-700">{resultCount}</strong> of {totalCount} records
+                    </span>
+
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center gap-2">
+                        <label className="text-xs font-bold text-slate-500">Sort:</label>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => onSortChange(e.target.value)}
+                            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 outline-none focus:ring-2 focus:ring-teal-500 font-medium"
+                        >
+                            <option value="health-desc">Health (High to Low)</option>
+                            <option value="health-asc">Health (Low to High)</option>
+                            <option value="hours-desc">Hours (Highest Wear)</option>
+                            <option value="hours-asc">Hours (Lowest Wear)</option>
+                            <option value="name-asc">Name (A-Z)</option>
+                            <option value="id-asc">Equipment ID</option>
+                        </select>
+                    </div>
+
+                    {/* Storage Status Tag */}
+                    <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-mono text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                        <span className={`w-2 h-2 rounded-full ${isJsonServer ? "bg-cyan-500" : "bg-emerald-500"}`}></span>
+                        <span>{isJsonServer ? "REST API (db.json)" : "LocalStorage"}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 4: Individual Equipment Card
+// =========================================================================
+function EquipmentCard({ item, onRead, onUpdate, onDelete }) {
+    let badgeClass = "bg-green-100 text-green-700 border-green-200";
+    let statusDot = "bg-green-500";
+    let statusLabel = "Operational";
+
+    if (item.status === "Monitor" || item.status === "Inspection Required") {
+        badgeClass = "bg-yellow-100 text-yellow-700 border-yellow-200";
+        statusDot = "bg-yellow-500 animate-pulse";
+        statusLabel = "Inspection Required";
+    } else if (item.status === "Attention" || item.status === "Maintenance Due") {
+        badgeClass = "bg-red-100 text-red-700 border-red-200";
+        statusDot = "bg-red-500 animate-ping";
+        statusLabel = "Maintenance Due";
+    }
+
+    const healthColor =
+        item.health > 80 ? "text-green-600" :
+        item.health > 60 ? "text-yellow-600" : "text-red-600";
+
+    const barColor =
+        item.health > 80 ? "bg-green-500" :
+        item.health > 60 ? "bg-yellow-500" : "bg-red-500";
+
+    return (
+        <article className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 card-hover flex flex-col justify-between transition-all duration-300">
+            <div>
+                {/* Image Banner & Header Overlays */}
+                <div className="h-48 overflow-hidden relative group bg-slate-900">
+                    <img
+                        src={getValidImageUrl(item.image)}
+                        alt={item.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=600&q=80";
+                        }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30 pointer-events-none"></div>
+
+                    {/* Operational Status Radio-selected badge */}
+                    <div className="absolute top-3 right-3">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${badgeClass} shadow-md backdrop-blur-md`}>
+                            <span className={`w-2 h-2 rounded-full ${statusDot}`}></span>
+                            {statusLabel}
+                        </span>
+                    </div>
+
+                    {/* ID and Category Tag */}
+                    <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                        <span className="bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-mono font-bold text-teal-300 border border-teal-500/30">
+                            {item.id}
+                        </span>
+                        <span className="bg-teal-950/80 text-teal-200 px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider">
+                            {item.category}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Card Content Body */}
+                <div className="p-6">
+                    <div className="mb-2">
+                        <h3 className="text-lg font-bold text-slate-900 line-clamp-1" title={item.name}>
+                            {item.name}
+                        </h3>
+                        <p className="text-xs text-teal-700 font-semibold mt-0.5">
+                            📍 {item.dept}
+                        </p>
+                    </div>
+
+                    <p className="text-slate-500 text-xs mt-2 leading-relaxed line-clamp-2">
+                        {item.desc || item.spec}
+                    </p>
+
+                    {/* Telemetry Grid Preview */}
+                    <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-100 text-center">
+                        <div className="bg-slate-50 p-2 rounded-xl">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold">Hours</p>
+                            <p className="text-xs font-bold text-slate-800 font-mono mt-0.5">{item.hours}h</p>
+                        </div>
+                        <div className="bg-slate-50 p-2 rounded-xl">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold">Temp</p>
+                            <p className="text-xs font-bold text-slate-800 font-mono mt-0.5">{item.temp}°C</p>
+                        </div>
+                        <div className="bg-slate-50 p-2 rounded-xl">
+                            <p className="text-[10px] text-slate-400 uppercase font-bold">Vibration</p>
+                            <p className="text-xs font-bold text-slate-800 font-mono mt-0.5">{item.vibration}</p>
+                        </div>
+                    </div>
+
+                    {/* Health Score Meter */}
+                    <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                            <span className="text-slate-500 font-medium">Predictive Health Score</span>
+                            <span className={`font-bold font-mono ${healthColor}`}>{item.health}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${item.health}%` }}></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Card Action Buttons: Read (View), Update (Edit), Delete */}
+            <div className="p-6 pt-0 space-y-2">
+                <button
+                    onClick={() => onRead(item)}
+                    className="w-full py-2.5 rounded-xl bg-teal-50 text-teal-800 font-bold hover:bg-teal-700 hover:text-white transition flex items-center justify-center gap-2 text-xs shadow-sm"
+                >
+                    <span>🔍 View Detailed Telemetry</span>
+                    <span>→</span>
+                </button>
+
+                <div className="grid grid-cols-2 gap-2">
+                    <button
+                        onClick={() => onUpdate(item)}
+                        className="py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition flex items-center justify-center gap-1.5 text-xs border border-slate-200"
+                    >
+                        <span>✏️ Edit</span>
+                    </button>
+                    <button
+                        onClick={() => onDelete(item)}
+                        className="py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold transition flex items-center justify-center gap-1.5 text-xs border border-rose-200"
+                    >
+                        <span>🗑️ Delete</span>
+                    </button>
+                </div>
+            </div>
+        </article>
+    );
+}
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 5: Form Modal (CREATE and UPDATE)
+// Satisfies: Form Handling, Multiple Input Fields, Radio Buttons, Select Dropdown
+// =========================================================================
+function EquipmentFormModal({ isOpen, isEditing, initialData, onSubmit, onClose }) {
+    const [formData, setFormData] = useState({
+        id: "",
+        name: "",
+        dept: "",
+        category: "icu",
+        type: "Patient Monitor",
+        status: "Operational",
+        health: 95,
+        temp: 24.0,
+        vibration: 0.15,
+        hours: 1200,
+        errors: 0,
+        lastService: "2026-08-01",
+        image: "images/patients_monitor.png",
+        spec: "",
+        desc: ""
+    });
+
+    const [formErrors, setFormErrors] = useState({});
+
+    // Populate form data when modal opens (or switch between Create and Update)
+    useEffect(() => {
+        if (initialData) {
+            setFormData(initialData);
+        } else {
+            // New record preset
+            const randomNum = Math.floor(100 + Math.random() * 899);
+            setFormData({
+                id: `EQ-${randomNum}`,
+                name: "",
+                dept: "ICU - Ward 2",
+                category: "icu",
+                type: "Ventilator",
+                status: "Operational",
+                health: 92,
+                temp: 23.5,
+                vibration: 0.2,
+                hours: 850,
+                errors: 0,
+                lastService: new Date().toISOString().split("T")[0],
+                image: "images/ventilator.png",
+                spec: "Standard Medical Precision Device",
+                desc: "Real-time clinical equipment monitored by AI MedCare telemetry."
+            });
+        }
+        setFormErrors({});
+    }, [initialData, isOpen]);
+
+    if (!isOpen) return null;
+
+    // Multiple input fields event handler
+    const handleChange = (e) => {
+        const { name, value, type } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === "number" ? (value === "" ? "" : Number(value)) : value
+        }));
+        if (formErrors[name]) {
+            setFormErrors(prev => ({ ...prev, [name]: null }));
+        }
+    };
+
+    // Form submission validation
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const errors = {};
+        if (!formData.id || !formData.id.trim()) errors.id = "Equipment ID is required.";
+        if (!formData.name || !formData.name.trim()) errors.name = "Equipment name is required.";
+        if (!formData.dept || !formData.dept.trim()) errors.dept = "Department is required.";
+        if (formData.hours === "" || formData.hours < 0) errors.hours = "Operating hours must be >= 0.";
+        if (formData.temp === "") errors.temp = "Temperature is required.";
+
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
+            return;
+        }
+
+        onSubmit({
+            ...formData,
+            health: Number(formData.health) || 90,
+            hours: Number(formData.hours) || 0,
+            temp: Number(formData.temp) || 24,
+            vibration: Number(formData.vibration) || 0.1,
+            errors: Number(formData.errors) || 0
+        });
+    };
+
+    const presetImages = [
+        { label: "Patient Monitor", url: "images/patients_monitor.png" },
+        { label: "Ventilator", url: "images/ventilator.png" },
+        { label: "X-Ray CT", url: "images/imaging_system.png" }
+    ];
+
+    return (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl border border-slate-200 my-auto">
+                
+                {/* Modal Header */}
+                <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-6">
+                    <div>
+                        <span className="text-xs font-mono bg-teal-50 text-teal-700 px-2.5 py-1 rounded-md font-bold">
+                            {isEditing ? "UPDATE EQUIPMENT RECORD" : "CREATE NEW RECORD"}
+                        </span>
+                        <h3 className="text-2xl font-black text-slate-900 mt-2">
+                            {isEditing ? `Edit Equipment: ${formData.id}` : "Register New Medical Equipment"}
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-1">
+                            React Controlled Form with validation, radio selectors, and multiple input types.
+                        </p>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="text-slate-400 hover:text-slate-800 text-2xl font-bold w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center transition"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                {/* Controlled Form */}
+                <form onSubmit={handleSubmit} className="space-y-5">
+
+                    {/* Row 1: ID and Equipment Name */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Equipment ID <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="id"
+                                value={formData.id}
+                                onChange={handleChange}
+                                disabled={isEditing}
+                                placeholder="e.g. EQ-701"
+                                className={`w-full bg-slate-50 border ${
+                                    formErrors.id ? "border-red-500 bg-red-50/30" : "border-slate-200"
+                                } rounded-xl px-4 py-2.5 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500 disabled:bg-slate-100 disabled:text-slate-500`}
+                            />
+                            {formErrors.id && <p className="text-[11px] text-red-600 mt-1">{formErrors.id}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Equipment Name <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                placeholder="e.g. Servo ICU Ventilator"
+                                className={`w-full bg-slate-50 border ${
+                                    formErrors.name ? "border-red-500 bg-red-50/30" : "border-slate-200"
+                                } rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-teal-500`}
+                            />
+                            {formErrors.name && <p className="text-[11px] text-red-600 mt-1">{formErrors.name}</p>}
+                        </div>
+                    </div>
+
+                    {/* Row 2: Department & Category (SELECT DROPDOWN - Mandatory) */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Hospital Department <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="dept"
+                                value={formData.dept}
+                                onChange={handleChange}
+                                placeholder="e.g. ICU - Unit 08"
+                                className={`w-full bg-slate-50 border ${
+                                    formErrors.dept ? "border-red-500 bg-red-50/30" : "border-slate-200"
+                                } rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-teal-500`}
+                            />
+                            {formErrors.dept && <p className="text-[11px] text-red-600 mt-1">{formErrors.dept}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Select Dropdown (Department Category) <span className="text-teal-600 font-normal">● Mandatory</span>
+                            </label>
+                            <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-teal-500 font-semibold text-slate-800"
+                            >
+                                <option value="icu">ICU Units (Intensive Care)</option>
+                                <option value="radiology">Radiology & CT Imaging</option>
+                                <option value="surgery">Surgical Operating Room</option>
+                                <option value="cardiology">Cardiology Diagnostics</option>
+                                <option value="laboratory">Pathology & Bio-Lab</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Row 3: RADIO BUTTONS (Operational Status - Mandatory Requirement) */}
+                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                            Radio Buttons (Operational Status) <span className="text-teal-600 font-normal">● Mandatory</span>
+                        </label>
+                        <div className="grid sm:grid-cols-3 gap-3">
+                            <label className={`flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                                formData.status === "Operational"
+                                    ? "bg-green-50 border-green-500 text-green-900 font-bold shadow-sm"
+                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100"
+                            }`}>
+                                <input
+                                    type="radio"
+                                    name="status"
+                                    value="Operational"
+                                    checked={formData.status === "Operational"}
+                                    onChange={handleChange}
+                                    className="accent-green-600 cursor-pointer"
+                                />
+                                <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                                <span className="text-xs">Operational</span>
+                            </label>
+
+                            <label className={`flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                                formData.status === "Monitor"
+                                    ? "bg-yellow-50 border-yellow-500 text-yellow-900 font-bold shadow-sm"
+                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100"
+                            }`}>
+                                <input
+                                    type="radio"
+                                    name="status"
+                                    value="Monitor"
+                                    checked={formData.status === "Monitor"}
+                                    onChange={handleChange}
+                                    className="accent-yellow-500 cursor-pointer"
+                                />
+                                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
+                                <span className="text-xs">Monitor Closely</span>
+                            </label>
+
+                            <label className={`flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                                formData.status === "Attention"
+                                    ? "bg-red-50 border-red-500 text-red-900 font-bold shadow-sm"
+                                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100"
+                            }`}>
+                                <input
+                                    type="radio"
+                                    name="status"
+                                    value="Attention"
+                                    checked={formData.status === "Attention"}
+                                    onChange={handleChange}
+                                    className="accent-red-600 cursor-pointer"
+                                />
+                                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                                <span className="text-xs">Attention Required</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Row 4: Multiple Input Fields for Telemetry (Hours, Temp, Vibration, Health) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Operating Hours</label>
+                            <input
+                                type="number"
+                                name="hours"
+                                value={formData.hours}
+                                onChange={handleChange}
+                                min="0"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Housing Temp (°C)</label>
+                            <input
+                                type="number"
+                                name="temp"
+                                value={formData.temp}
+                                onChange={handleChange}
+                                step="0.1"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Vibration (mm/s)</label>
+                            <input
+                                type="number"
+                                name="vibration"
+                                value={formData.vibration}
+                                onChange={handleChange}
+                                step="0.05"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">Health Score %</label>
+                            <input
+                                type="number"
+                                name="health"
+                                value={formData.health}
+                                onChange={handleChange}
+                                min="1"
+                                max="100"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500 font-bold text-teal-700"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Row 5: Specification & Last Service Date */}
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Technical Specification
+                            </label>
+                            <input
+                                type="text"
+                                name="spec"
+                                value={formData.spec}
+                                onChange={handleChange}
+                                placeholder="e.g. Turbine lung ventilator with flow sensors"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-teal-500"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                Last Serviced Date
+                            </label>
+                            <input
+                                type="date"
+                                name="lastService"
+                                value={formData.lastService}
+                                onChange={handleChange}
+                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Row 6: Image Selection */}
+                    <div>
+                        <div className="flex justify-between items-center mb-1.5">
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                                Image Asset (URL or Local)
+                            </label>
+                            <div className="flex gap-1.5">
+                                {presetImages.map(preset => (
+                                    <button
+                                        key={preset.label}
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, image: preset.url }))}
+                                        className="text-[10px] font-semibold bg-teal-50 hover:bg-teal-100 text-teal-800 px-2 py-0.5 rounded transition"
+                                    >
+                                        + {preset.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <input
+                            type="text"
+                            name="image"
+                            value={formData.image}
+                            onChange={handleChange}
+                            placeholder="images/ventilator.png or https://..."
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-mono outline-none focus:ring-2 focus:ring-teal-500"
+                        />
+                    </div>
+
+                    {/* Row 7: Clinical Description & Diagnostic Notes */}
+                    <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            Clinical Notes & Diagnostic Logs
+                        </label>
+                        <textarea
+                            name="desc"
+                            value={formData.desc}
+                            onChange={handleChange}
+                            rows="2"
+                            placeholder="Enter detailed maintenance notes or diagnostic symptoms..."
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs outline-none focus:ring-2 focus:ring-teal-500"
+                        ></textarea>
+                    </div>
+
+                    {/* Modal Buttons */}
+                    <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-6 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition shadow-md shadow-teal-700/20 flex items-center gap-1.5"
+                        >
+                            <span>💾</span>
+                            <span>{isEditing ? "Save & Update Record" : "Add Equipment Record"}</span>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    );
+}
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 6: Detailed Telemetry View Modal (READ Operation)
+// =========================================================================
+function TelemetryViewModal({ item, onClose, onScheduleService }) {
+    const chartCanvasRef = useRef(null);
+    const chartInstanceRef = useRef(null);
+
+    useEffect(() => {
+        if (!item || !chartCanvasRef.current || typeof Chart === "undefined") return;
+
+        const ctx = chartCanvasRef.current.getContext("2d");
+        if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+        }
+
+        const labels = ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "Now"];
+        const baseTemp = Number(item.temp) || 24;
+        const tempData = labels.map(() => +(baseTemp + (Math.random() * 2 - 1)).toFixed(1));
+
+        chartInstanceRef.current = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Thermal Sensor (°C)",
+                    data: tempData,
+                    borderColor: "#0f766e",
+                    backgroundColor: "rgba(15, 118, 110, 0.12)",
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        grid: { color: "rgba(226, 232, 240, 0.6)" },
+                        ticks: { font: { family: "JetBrains Mono", size: 10 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: "JetBrains Mono", size: 10 } }
+                    }
+                }
+            }
+        });
+
+        return () => {
+            if (chartInstanceRef.current) {
+                chartInstanceRef.current.destroy();
+            }
+        };
+    }, [item]);
+
+    if (!item) return null;
+
+    return (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl border border-slate-200">
+                <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+                    <div>
+                        <span className="text-xs font-mono bg-teal-50 text-teal-700 px-2.5 py-1 rounded-md font-bold">
+                            {item.id} | {item.dept}
+                        </span>
+                        <h3 className="text-2xl font-black text-slate-900 mt-2">{item.name}</h3>
+                        <p className="text-xs text-slate-500 mt-1 font-mono">{item.spec || item.type}</p>
+                    </div>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-800 text-2xl font-bold">✕</button>
+                </div>
+
+                <p className="text-slate-600 text-xs leading-relaxed mb-6">{item.desc}</p>
+
+                {/* 4 Telemetry Indices */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-slate-50 p-3.5 rounded-2xl text-center">
+                        <p className="text-[10px] uppercase font-bold text-slate-400">Health Index</p>
+                        <p className="text-xl font-bold text-teal-700 font-mono mt-1">{item.health}%</p>
+                    </div>
+                    <div className="bg-slate-50 p-3.5 rounded-2xl text-center">
+                        <p className="text-[10px] uppercase font-bold text-slate-400">Total Hours</p>
+                        <p className="text-xl font-bold text-slate-800 font-mono mt-1">{item.hours} hrs</p>
+                    </div>
+                    <div className="bg-slate-50 p-3.5 rounded-2xl text-center">
+                        <p className="text-[10px] uppercase font-bold text-slate-400">Temperature</p>
+                        <p className="text-xl font-bold text-slate-800 font-mono mt-1">{item.temp} °C</p>
+                    </div>
+                    <div className="bg-slate-50 p-3.5 rounded-2xl text-center">
+                        <p className="text-[10px] uppercase font-bold text-slate-400">Vibration</p>
+                        <p className="text-xl font-bold text-slate-800 font-mono mt-1">{item.vibration} mm/s</p>
+                    </div>
+                </div>
+
+                {/* Real-time Dynamic Chart */}
+                <div className="mb-6">
+                    <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Thermal Telemetry Trend (Past 24h)
+                    </h4>
+                    <div className="h-44 bg-slate-50 rounded-2xl p-3 border border-slate-100">
+                        <canvas ref={chartCanvasRef}></canvas>
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+                    <span className="text-xs text-slate-400">
+                        Last Serviced: <strong className="text-slate-700">{item.lastService}</strong>
+                    </span>
+                    <button
+                        onClick={() => {
+                            onClose();
+                            if (onScheduleService) onScheduleService(item);
+                        }}
+                        className="bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-teal-800 transition shadow-md shadow-teal-700/20"
+                    >
+                        Schedule Maintenance Work Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// =========================================================================
+// REUSABLE SUB-COMPONENT 7: Delete Confirmation Modal (DELETE Operation)
+// =========================================================================
+function DeleteConfirmModal({ item, onConfirm, onCancel }) {
+    if (!item) return null;
+
+    return (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 text-center animate-scaleIn">
+                <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                    ⚠️
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Confirm Delete Record</h3>
+                <p className="text-xs text-slate-600 mb-6 leading-relaxed">
+                    Are you sure you want to remove <strong className="text-slate-900">{item.name}</strong> (<span className="font-mono text-teal-700">{item.id}</span>)? This will remove it from the React state and your local database.
+                </p>
+                <div className="flex justify-center gap-3">
+                    <button
+                        onClick={onCancel}
+                        className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition shadow-md shadow-red-600/20"
+                    >
+                        Yes, Delete Equipment
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// =========================================================================
+// MAIN ROOT COMPONENT: EquipmentFleetApp
+// =========================================================================
+function EquipmentFleetApp() {
+    // 1. Core State
+    const [equipmentList, setEquipmentList] = useState([]);
+    const [activeCategory, setActiveCategory] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("health-desc");
+
+    // 2. Modal States
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
+    const [viewingItem, setViewingItem] = useState(null);
+    const [deletingItem, setDeletingItem] = useState(null);
+
+    // 3. Status feedback & Database flags
+    const [toast, setToast] = useState(null);
+    const [isJsonServerConnected, setIsJsonServerConnected] = useState(false);
+
+    const categories = [
+        { key: "all", label: "All Fleet", icon: "🏥" },
+        { key: "icu", label: "ICU Units", icon: "🫁" },
+        { key: "radiology", label: "Radiology", icon: "🩻" },
+        { key: "surgery", label: "Surgical OR", icon: "🩺" },
+        { key: "cardiology", label: "Cardiology", icon: "🫀" }
+    ];
+
+    const showToast = (message, type = "success", title = "Fleet Notification") => {
+        setToast({ message, type, title });
+        setTimeout(() => setToast(null), 3500);
+    };
+
+    // 4. Initial Load: Try JSON Server REST API, then fallback to LocalStorage
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadInitialData() {
+            // First check if JSON-Server is running
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1200);
+                const res = await fetch(JSON_SERVER_URL, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (Array.isArray(data) && data.length > 0 && isMounted) {
+                        setEquipmentList(data);
+                        setIsJsonServerConnected(true);
+                        // Also sync to local storage
+                        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+                        window.equipmentData = data;
+                        return;
+                    }
+                }
+            } catch (err) {
+                // JSON Server not running; fallback to Local Storage
+            }
+
+            // Fallback to LocalStorage (Option 1 in Lab Exercise)
+            try {
+                const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        if (isMounted) {
+                            setEquipmentList(parsed);
+                            window.equipmentData = parsed;
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not read from local storage", e);
+            }
+
+            // Fallback to DEFAULT_FLEET
+            if (isMounted) {
+                setEquipmentList(DEFAULT_FLEET);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_FLEET));
+                window.equipmentData = DEFAULT_FLEET;
+            }
+        }
+
+        loadInitialData();
+        return () => { isMounted = false; };
+    }, []);
+
+    // 5. Keep LocalStorage and global window.equipmentData synchronized
+    useEffect(() => {
+        if (equipmentList.length > 0) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(equipmentList));
+            window.equipmentData = equipmentList;
+        }
+    }, [equipmentList]);
+
+    // 6. Real-time Computed Fleet Statistics
+    const stats = useMemo(() => {
+        const total = equipmentList.length;
+        const operational = equipmentList.filter(e => e.status === "Operational").length;
+        const monitor = equipmentList.filter(e => e.status === "Monitor" || e.status === "Inspection Required").length;
+        const attention = equipmentList.filter(e => e.status === "Attention" || e.status === "Maintenance Due").length;
+        const avgHealth = total > 0
+            ? Math.round(equipmentList.reduce((acc, curr) => acc + (Number(curr.health) || 0), 0) / total)
+            : 0;
+        return { total, operational, monitor, attention, avgHealth };
+    }, [equipmentList]);
+
+    // 7. Filtered & Sorted Equipment Records (Bonus Dynamic Search Feature)
+    const filteredAndSortedList = useMemo(() => {
+        let result = equipmentList.filter(item => {
+            const matchesCategory = activeCategory === "all" || item.category === activeCategory;
+            const term = searchTerm.toLowerCase().trim();
+            const matchesSearch = term === "" ||
+                (item.name && item.name.toLowerCase().includes(term)) ||
+                (item.id && item.id.toLowerCase().includes(term)) ||
+                (item.dept && item.dept.toLowerCase().includes(term)) ||
+                (item.category && item.category.toLowerCase().includes(term)) ||
+                (item.spec && item.spec.toLowerCase().includes(term));
+            return matchesCategory && matchesSearch;
+        });
+
+        // Sorting
+        result.sort((a, b) => {
+            if (sortBy === "health-desc") return (b.health || 0) - (a.health || 0);
+            if (sortBy === "health-asc") return (a.health || 0) - (b.health || 0);
+            if (sortBy === "hours-desc") return (b.hours || 0) - (a.hours || 0);
+            if (sortBy === "hours-asc") return (a.hours || 0) - (b.hours || 0);
+            if (sortBy === "name-asc") return (a.name || "").localeCompare(b.name || "");
+            if (sortBy === "id-asc") return (a.id || "").localeCompare(b.id || "");
+            return 0;
+        });
+
+        return result;
+    }, [equipmentList, activeCategory, searchTerm, sortBy]);
+
+    // =====================================================================
+    // CRUD OPERATIONS
+    // =====================================================================
+
+    // CREATE: Add new equipment record
+    const handleCreateEquipment = async (newRecord) => {
+        // Prevent duplicate IDs
+        if (equipmentList.some(e => e.id.toLowerCase() === newRecord.id.toLowerCase())) {
+            showToast(`ID ${newRecord.id} already exists. Please choose a unique ID.`, "danger", "Creation Error");
+            return;
+        }
+
+        const updated = [newRecord, ...equipmentList];
+        setEquipmentList(updated);
+        setIsFormOpen(false);
+        showToast(`Equipment ${newRecord.id} successfully added to fleet!`, "success", "Record Created");
+
+        // Optional JSON Server POST
+        if (isJsonServerConnected) {
+            try {
+                await fetch(JSON_SERVER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newRecord)
+                });
+            } catch (err) {
+                console.warn("JSON-server POST failed, stored in LocalStorage", err);
+            }
+        }
+    };
+
+    // UPDATE: Modify existing equipment record
+    const handleUpdateEquipment = async (updatedRecord) => {
+        const updated = equipmentList.map(item =>
+            item.id === updatedRecord.id ? updatedRecord : item
+        );
+        setEquipmentList(updated);
+        setIsFormOpen(false);
+        setEditingItem(null);
+        showToast(`Record ${updatedRecord.id} (${updatedRecord.name}) updated successfully!`, "success", "Record Updated");
+
+        // Optional JSON Server PUT
+        if (isJsonServerConnected) {
+            try {
+                await fetch(`${JSON_SERVER_URL}/${updatedRecord.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedRecord)
+                });
+            } catch (err) {
+                console.warn("JSON-server PUT failed, stored in LocalStorage", err);
+            }
+        }
+    };
+
+    // DELETE: Remove equipment record
+    const handleDeleteEquipment = async () => {
+        if (!deletingItem) return;
+        const targetId = deletingItem.id;
+        const updated = equipmentList.filter(item => item.id !== targetId);
+        setEquipmentList(updated);
+        setDeletingItem(null);
+        showToast(`Equipment ${targetId} was permanently deleted.`, "danger", "Record Removed");
+
+        // Optional JSON Server DELETE
+        if (isJsonServerConnected) {
+            try {
+                await fetch(`${JSON_SERVER_URL}/${targetId}`, {
+                    method: "DELETE"
+                });
+            } catch (err) {
+                console.warn("JSON-server DELETE failed, deleted from LocalStorage", err);
+            }
+        }
+    };
+
+    // Reset fleet back to initial seeds
+    const handleResetFleet = () => {
+        if (window.confirm("Reset all fleet records back to default sample data?")) {
+            setEquipmentList(DEFAULT_FLEET);
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_FLEET));
+            showToast("Fleet restored to initial factory sample records.", "success", "Fleet Reset");
+        }
+    };
+
+    return (
+        <div className="w-full">
+            {/* Toast Alerts */}
+            <ToastNotification toast={toast} onClose={() => setToast(null)} />
+
+            {/* Dynamic Fleet Statistics Bar */}
+            <FleetStatsBar stats={stats} />
+
+            {/* Toolbar: Category Filters, Dynamic Search, Sort, Add CTA */}
+            <EquipmentFilterToolbar
+                categories={categories}
+                activeCategory={activeCategory}
+                onSelectCategory={setActiveCategory}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                onOpenAddModal={() => {
+                    setEditingItem(null);
+                    setIsFormOpen(true);
+                }}
+                onResetFleet={handleResetFleet}
+                resultCount={filteredAndSortedList.length}
+                totalCount={equipmentList.length}
+                isJsonServer={isJsonServerConnected}
+            />
+
+            {/* Equipment Grid (READ Operation) */}
+            {filteredAndSortedList.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+                    <span className="text-5xl">🔎</span>
+                    <h3 className="text-lg font-bold text-slate-800 mt-3">No Matching Equipment Found</h3>
+                    <p className="text-slate-500 text-xs mt-1 max-w-sm mx-auto">
+                        No devices match "{searchTerm}". Try clearing your search term or switching the category tab.
+                    </p>
+                    <button
+                        onClick={() => { setSearchTerm(""); setActiveCategory("all"); }}
+                        className="mt-4 px-4 py-2 rounded-xl bg-teal-50 text-teal-700 text-xs font-bold hover:bg-teal-100 transition"
+                    >
+                        Clear Filters
+                    </button>
+                </div>
+            ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredAndSortedList.map(item => (
+                        <EquipmentCard
+                            key={item.id}
+                            item={item}
+                            onRead={(selected) => setViewingItem(selected)}
+                            onUpdate={(selected) => {
+                                setEditingItem(selected);
+                                setIsFormOpen(true);
+                            }}
+                            onDelete={(selected) => setDeletingItem(selected)}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {/* CREATE / UPDATE MODAL */}
+            <EquipmentFormModal
+                isOpen={isFormOpen}
+                isEditing={!!editingItem}
+                initialData={editingItem}
+                onSubmit={editingItem ? handleUpdateEquipment : handleCreateEquipment}
+                onClose={() => {
+                    setIsFormOpen(false);
+                    setEditingItem(null);
+                }}
+            />
+
+            {/* READ DETAILS MODAL (Telemetry View) */}
+            <TelemetryViewModal
+                item={viewingItem}
+                onClose={() => setViewingItem(null)}
+                onScheduleService={(selected) => {
+                    if (typeof openWorkOrderModal === "function") {
+                        openWorkOrderModal();
+                    }
+                }}
+            />
+
+            {/* DELETE CONFIRMATION MODAL */}
+            <DeleteConfirmModal
+                item={deletingItem}
+                onConfirm={handleDeleteEquipment}
+                onCancel={() => setDeletingItem(null)}
+            />
+        </div>
+    );
+}
+
+// Mount the React Application into the DOM
+function mountReactFleetApp() {
+    const rootElement = document.getElementById("react-equipment-root");
+    if (rootElement && typeof ReactDOM !== "undefined" && typeof React !== "undefined") {
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<EquipmentFleetApp />);
+        console.log("[AI MedCare] React 18 Equipment Fleet mounted successfully.");
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountReactFleetApp);
+} else {
+    mountReactFleetApp();
+}
+
+// Legacy fallback
+window.initReactFleet = mountReactFleetApp;
+
+    </script>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+
+</html>
